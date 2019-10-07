@@ -67,6 +67,8 @@ static void tcp_ip_client_thread(void *arg)
       message_received = verify_message_received();
       /* verify if message is message count has reached its limit */
       message_count = verify_message_count(MSG_NUM);
+      /* allocate memory for buffer */
+      netbuf_alloc(buf, len);
 
       while ((TRUE == message_received) && (FALSE == message_count))
       {
