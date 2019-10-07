@@ -18,21 +18,8 @@ static void *data_4 = "P4";
   //AES_init_ctx(&ctx, key);
 //      AES_ECB_encrypt(&ctx, data_1);
  // AES_ECB_decrypt(&ctx, buf);
-typedef struct 
-{
-   node_t node_type;
-   uint8_t HOST_ADDR[4];
-   uint8_t PORT;
-   ip4_addr_t host_ip_addr;
-} tcp_ip_config;
 
-typedef enum
-{
-  CLIENT,
-  SERVER
-} node_t;
-
-static uint8_t n_messages;
+static tcp_ip_config global_config;
 
 static void tcp_ip_client_thread(void *arg)
 {
@@ -109,10 +96,10 @@ static void tcp_ip_server_thread(void *arg)
 
 void tcp_ip_init(tcp_ip_config config)
 {
-
 	/* Set network host's IP address */
 	IP4_ADDR(&config.host_ip_addr, config.HOST_ADDR[0], config.HOST_ADDR[1], config.HOST_ADDR[2], config.HOST_ADDR[3]);
 
+  /* Create client/server thread */
   switch(config.node_type)
   {
     case CLIENT:
@@ -122,6 +109,7 @@ void tcp_ip_init(tcp_ip_config config)
       sys_thread_new("tcpecho_thread", tcp_ip_server_thread, NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
     break;
     case default:
+      global_config = config;
     break;
   }
 }
